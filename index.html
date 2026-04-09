@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ajedits26 — Video Editing Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --accent: #e8ff47;
+    --accent2: #ff6b35;
+    --text: #f0eee8;
+    --muted: #888899;
+    --border: rgba(255,255,255,0.08);
+    --radius: 18px;
+    --nav-h: 70px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    z-index: 100;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    width: 44px; height: 44px;
+    cursor: pointer;
+  }
+
+  .avatar-wrapper img {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    display: block;
+  }
+
+  .avatar-placeholder {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px dashed var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--accent);
+    text-align: center;
+    cursor: pointer;
+    line-height: 1.2;
+  }
+
+  #avatar-upload { display: none; }
+
+  .nav-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 0;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--text);
+    background: var(--surface2);
+    border-color: var(--border);
+  }
+
+  .nav-links a.active {
+    color: var(--accent);
+  }
+
+  /* ── PAGES ── */
+  .page {
+    display: none;
+    min-height: 100vh;
+    padding-top: var(--nav-h);
+    position: relative;
+    z-index: 1;
+  }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 2rem 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(232,255,71,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero-eyebrow span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.9rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: 0;
+    margin-bottom: 20px;
+    max-width: 700px;
+    margin-inline: auto;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 500px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .section-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .section-header .line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-header .tag {
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: rgba(232,255,71,0.08);
+    border: 1px solid rgba(232,255,71,0.2);
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── CONTAINER ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem 80px;
+  }
+
+  /* ── ADD PROJECT FORM ── */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 60px;
+  }
+
+  .form-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .form-card h3::before {
+    content: '';
+    width: 3px; height: 18px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-grid .full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  input[type="text"],
+  input[type="url"],
+  select,
+  textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]:focus,
+  input[type="url"]:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--accent);
+  }
+
+  select option { background: var(--surface); }
+
+  textarea { resize: vertical; min-height: 90px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    margin-top: 16px;
+  }
+
+  .btn:hover {
+    background: #f5ff80;
+    transform: translateY(-1px);
+  }
+
+  .btn:active { transform: translateY(0); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid rgba(232,255,71,0.3);
+    margin-top: 0;
+  }
+
+  .btn-ghost:hover { background: rgba(232,255,71,0.08); }
+
+  /* ── PROJECT GRID ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+    cursor: default;
+  }
+
+  .project-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(232,255,71,0.25);
+  }
+
+  .project-thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-thumb svg {
+    opacity: 0.2;
+  }
+
+  .project-thumb .play-icon {
+    position: absolute;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: rgba(232,255,71,0.15);
+    border: 1.5px solid rgba(232,255,71,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .project-thumb a {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .project-thumb a:hover { opacity: 1; }
+
+  .project-link-label {
+    background: var(--accent);
+    color: #0a0a0f;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 999px;
+  }
+
+  .project-info {
+    padding: 18px 20px;
+  }
+
+  .project-type-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(232,255,71,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(232,255,71,0.2);
+    margin-bottom: 10px;
+  }
+
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .project-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+  }
+
+  .empty-state svg { opacity: 0.3; margin-bottom: 16px; }
+  .empty-state p { font-size: 0.9rem; }
+
+  /* ── FOOTER / SOCIALS ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+    gap: 20px;
+  }
+
+  .footer-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .footer-brand span { color: var(--accent); }
+
+  .socials {
+    display: flex;
+    gap: 12px;
+  }
+
+  .social-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .social-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .social-btn svg {
+    flex-shrink: 0;
+  }
+
+  .social-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .social-input-row label {
+    width: 90px;
+    margin-bottom: 0;
+    text-transform: none;
+    font-size: 0.85rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .social-input-row input {
+    flex: 1;
+  }
+
+  /* ── EXPERIENCE PAGE ── */
+  .exp-form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 48px;
+  }
+
+  .exp-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .exp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .exp-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 28px; bottom: 28px;
+    width: 3px;
+    background: var(--accent);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .exp-card:hover { border-color: rgba(232,255,71,0.2); }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .exp-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .exp-company {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .exp-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.7;
+  }
+
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-tag {
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── SOCIAL MODAL ── */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: 480px;
+    margin: 1rem;
+  }
+
+  .modal h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    margin-bottom: 24px;
+    font-size: 1.1rem;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+
+  .btn-sm {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    margin-top: 0;
+  }
+
+  /* ── DELETE BTN ── */
+  .delete-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: color 0.2s;
+    padding: 4px;
+  }
+  .delete-btn:hover { color: #ff5555; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up { animation: fadeUp 0.4s ease forwards; }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid .full { grid-column: 1; }
+    .hero h1 { font-size: 2.2rem; }
+    footer { flex-direction: column; align-items: flex-start; }
+    .socials { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav>
+  <div class="nav-left">
+    <div class="avatar-wrapper" onclick="document.getElementById('avatar-upload').click()" title="Upload profile picture">
+      <div class="avatar-placeholder" id="avatar-placeholder">PFP</div>
+      <img id="avatar-img" src="" alt="Profile" style="display:none"/>
+    </div>
+    <input type="file" id="avatar-upload" accept="image/png,image/jpg,image/jpeg,image/webp"/>
+    <div class="nav-brand">ajedits26</div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#" class="active" onclick="showPage('home',this)">Home</a></li>
+    <li><a href="#" onclick="showPage('experience',this)">Experience</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════ HOME PAGE ══════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow"><span></span>Available for Work · Fiverr Freelancer</div>
+    <h1>Welcome to My<br/><em>Video Editing</em><br/>Portfolio</h1>
+    <p>Professional cuts, color grading, motion graphics, and storytelling — crafted frame by frame.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" id="stat-projects">0</div><div class="stat-label">Projects</div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Client Focus</div></div>
+      <div class="stat"><div class="stat-num">5★</div><div class="stat-label">Fiverr Rating</div></div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Add Project Form -->
+    <div class="form-card">
+      <h3>Add a Project</h3>
+      <div class="form-grid">
+        <div>
+          <label for="proj-name">Project Name</label>
+          <input type="text" id="proj-name" placeholder="e.g. Brand Promo Reel"/>
+        </div>
+        <div>
+          <label for="proj-type">Project Type</label>
+          <select id="proj-type">
+            <option value="">Select type…</option>
+            <option>Short Film</option>
+            <option>Music Video</option>
+            <option>Brand / Promo</option>
+            <option>YouTube Video</option>
+            <option>Social Media Reel</option>
+            <option>Documentary</option>
+            <option>Wedding / Event</option>
+            <option>Motion Graphics</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="proj-desc">Project Description</label>
+          <textarea id="proj-desc" placeholder="Describe the project, your role, tools used…"></textarea>
+        </div>
+        <div class="full">
+          <label for="proj-url">Proof / Preview URL</label>
+          <input type="url" id="proj-url" placeholder="https://youtube.com/watch?v=…"/>
+        </div>
+      </div>
+      <button class="btn" onclick="addProject()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Add Project
+      </button>
+    </div>
+
+    <!-- Projects Section -->
+    <div class="section-header">
+      <h2>Projects</h2>
+      <div class="line"></div>
+      <div class="tag" id="proj-count-tag">0 works</div>
+    </div>
+
+    <div class="projects-grid" id="projects-grid">
+      <div class="empty-state" id="empty-projects">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="40" height="28" rx="6" stroke="#888899" stroke-width="2"/><path d="M20 18l10 6-10 6V18z" fill="#888899"/></svg>
+        <p>No projects yet. Fill out the form above to add your first work.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-brand">© 2025 <span>ajedits26</span> — Video Editing Portfolio</div>
+    <div class="socials">
+      <button class="social-btn" onclick="openSocialModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        <span id="ig-label">Instagram</span>
+      </button>
+      <button class="social-btn" onclick="openSocialModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        <span id="li-label">LinkedIn</span>
+      </button>
+      <button class="social-btn" onclick="openSocialModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+        <span id="dc-label">Discord</span>
+      </button>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════════════ EXPERIENCE PAGE ══════════════════ -->
+<div class="page" id="page-experience">
+
+  <div class="container" style="padding-top:50px">
+
+    <div class="section-header" style="margin-bottom:40px">
+      <h2>Experience</h2>
+      <div class="line"></div>
+      <div class="tag">My Background</div>
+    </div>
+
+    <!-- Experience Form -->
+    <div class="exp-form-card">
+      <h3 style="font-family:'Syne',sans-serif;font-weight:800;margin-bottom:24px;font-size:1.05rem;display:flex;align-items:center;gap:10px;">
+        <span style="display:block;width:3px;height:18px;background:var(--accent);border-radius:2px;"></span>
+        Add Experience
+      </h3>
+      <div class="form-grid">
+        <div>
+          <label for="exp-title">Job Title</label>
+          <input type="text" id="exp-title" placeholder="e.g. Freelance Video Editor"/>
+        </div>
+        <div>
+          <label for="exp-company">Company / Client</label>
+          <input type="text" id="exp-company" placeholder="e.g. Self-Employed / Studio X"/>
+        </div>
+        <div class="full">
+          <label for="exp-desc">Job Description</label>
+          <textarea id="exp-desc" placeholder="Describe your responsibilities, projects, and achievements…"></textarea>
+        </div>
+        <div class="full">
+          <label for="exp-skills">Skills (comma-separated)</label>
+          <input type="text" id="exp-skills" placeholder="Premiere Pro, After Effects, Color Grading, Motion Graphics…"/>
+        </div>
+      </div>
+      <button class="btn" onclick="addExperience()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Add Experience
+      </button>
+    </div>
+
+    <!-- Experience List -->
+    <div class="exp-grid" id="exp-grid">
+      <div class="empty-state" id="empty-experience">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="8" y="4" width="32" height="40" rx="4" stroke="#888899" stroke-width="2"/><path d="M16 16h16M16 24h16M16 32h10" stroke="#888899" stroke-width="2" stroke-linecap="round"/></svg>
+        <p>No experience added yet. Fill out the form above to showcase your background.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ SOCIAL MODAL ══════════════════ -->
+<div class="modal-backdrop" id="social-modal">
+  <div class="modal">
+    <h3>Social Media Links</h3>
+    <div class="social-input-row">
+      <label>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        Instagram
+      </label>
+      <input type="text" id="ig-input" placeholder="@yourhandle"/>
+    </div>
+    <div class="social-input-row">
+      <label>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+      </label>
+      <input type="url" id="li-input" placeholder="https://linkedin.com/in/…"/>
+    </div>
+    <div class="social-input-row">
+      <label>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+        Discord
+      </label>
+      <input type="text" id="dc-input" placeholder="username#0000"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeSocialModal()">Cancel</button>
+      <button class="btn btn-sm" onclick="saveSocials()">Save Links</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── STATE ── */
+  let projects = JSON.parse(localStorage.getItem('aje_projects') || '[]');
+  let experiences = JSON.parse(localStorage.getItem('aje_experiences') || '[]');
+  let socials = JSON.parse(localStorage.getItem('aje_socials') || '{"ig":"","li":"","dc":""}');
+
+  function save() {
+    localStorage.setItem('aje_projects', JSON.stringify(projects));
+    localStorage.setItem('aje_experiences', JSON.stringify(experiences));
+    localStorage.setItem('aje_socials', JSON.stringify(socials));
+  }
+
+  /* ── NAV ── */
+  function showPage(page, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    el.classList.add('active');
+    return false;
+  }
+
+  /* ── AVATAR ── */
+  document.getElementById('avatar-upload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const img = document.getElementById('avatar-img');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+      document.getElementById('avatar-placeholder').style.display = 'none';
+      localStorage.setItem('aje_avatar', ev.target.result);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* Load avatar */
+  const savedAvatar = localStorage.getItem('aje_avatar');
+  if (savedAvatar) {
+    document.getElementById('avatar-img').src = savedAvatar;
+    document.getElementById('avatar-img').style.display = 'block';
+    document.getElementById('avatar-placeholder').style.display = 'none';
+  }
+
+  /* ── PROJECTS ── */
+  function addProject() {
+    const name = document.getElementById('proj-name').value.trim();
+    const type = document.getElementById('proj-type').value;
+    const desc = document.getElementById('proj-desc').value.trim();
+    const url  = document.getElementById('proj-url').value.trim();
+    if (!name || !type || !desc) { alert('Please fill in the project name, type, and description.'); return; }
+    projects.push({ id: Date.now(), name, type, desc, url });
+    save();
+    renderProjects();
+    document.getElementById('proj-name').value = '';
+    document.getElementById('proj-type').value = '';
+    document.getElementById('proj-desc').value = '';
+    document.getElementById('proj-url').value = '';
+  }
+
+  function deleteProject(id) {
+    projects = projects.filter(p => p.id !== id);
+    save();
+    renderProjects();
+  }
+
+  function renderProjects() {
+    const grid = document.getElementById('projects-grid');
+    const empty = document.getElementById('empty-projects');
+    document.getElementById('stat-projects').textContent = projects.length;
+    document.getElementById('proj-count-tag').textContent = projects.length + ' work' + (projects.length !== 1 ? 's' : '');
+
+    const existing = grid.querySelectorAll('.project-card');
+    existing.forEach(e => e.remove());
+
+    if (projects.length === 0) {
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      projects.forEach((p, i) => {
+        const card = document.createElement('div');
+        card.className = 'project-card fade-up';
+        card.style.animationDelay = (i * 0.05) + 's';
+        card.innerHTML = `
+          <div class="project-thumb">
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect x="5" y="5" width="50" height="50" rx="8" stroke="#888899" stroke-width="2"/><path d="M24 20l18 10-18 10V20z" fill="#888899"/></svg>
+            ${p.url ? `<a href="${escHtml(p.url)}" target="_blank" rel="noopener"><span class="project-link-label">View Project ↗</span></a>` : ''}
+          </div>
+          <div class="project-info">
+            <div class="project-type-badge">${escHtml(p.type)}</div>
+            <div class="project-name">${escHtml(p.name)}</div>
+            <div class="project-desc">${escHtml(p.desc)}</div>
+          </div>
+          <button class="delete-btn" onclick="deleteProject(${p.id})" title="Remove">✕</button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+  }
+
+  /* ── EXPERIENCE ── */
+  function addExperience() {
+    const title   = document.getElementById('exp-title').value.trim();
+    const company = document.getElementById('exp-company').value.trim();
+    const desc    = document.getElementById('exp-desc').value.trim();
+    const skills  = document.getElementById('exp-skills').value.trim();
+    if (!title || !desc) { alert('Please fill in at least a job title and description.'); return; }
+    experiences.push({ id: Date.now(), title, company, desc, skills });
+    save();
+    renderExperiences();
+    document.getElementById('exp-title').value = '';
+    document.getElementById('exp-company').value = '';
+    document.getElementById('exp-desc').value = '';
+    document.getElementById('exp-skills').value = '';
+  }
+
+  function deleteExperience(id) {
+    experiences = experiences.filter(e => e.id !== id);
+    save();
+    renderExperiences();
+  }
+
+  function renderExperiences() {
+    const grid = document.getElementById('exp-grid');
+    const empty = document.getElementById('empty-experience');
+    const existing = grid.querySelectorAll('.exp-card');
+    existing.forEach(e => e.remove());
+
+    if (experiences.length === 0) {
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      experiences.forEach((exp, i) => {
+        const card = document.createElement('div');
+        card.className = 'exp-card fade-up';
+        card.style.animationDelay = (i * 0.06) + 's';
+        const skillTags = exp.skills
+          ? exp.skills.split(',').map(s => s.trim()).filter(Boolean)
+              .map(s => `<span class="skill-tag">${escHtml(s)}</span>`).join('')
+          : '';
+        card.innerHTML = `
+          <div class="exp-header">
+            <div>
+              <div class="exp-title">${escHtml(exp.title)}</div>
+              ${exp.company ? `<div class="exp-company">${escHtml(exp.company)}</div>` : ''}
+            </div>
+          </div>
+          <div class="exp-desc">${escHtml(exp.desc)}</div>
+          ${skillTags ? `<div class="skills-list">${skillTags}</div>` : ''}
+          <button class="delete-btn" onclick="deleteExperience(${exp.id})" title="Remove">✕</button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+  }
+
+  /* ── SOCIALS ── */
+  function openSocialModal() {
+    document.getElementById('ig-input').value = socials.ig || '';
+    document.getElementById('li-input').value = socials.li || '';
+    document.getElementById('dc-input').value = socials.dc || '';
+    document.getElementById('social-modal').classList.add('open');
+  }
+
+  function closeSocialModal() {
+    document.getElementById('social-modal').classList.remove('open');
+  }
+
+  function saveSocials() {
+    socials.ig = document.getElementById('ig-input').value.trim();
+    socials.li = document.getElementById('li-input').value.trim();
+    socials.dc = document.getElementById('dc-input').value.trim();
+    save();
+    updateSocialLabels();
+    closeSocialModal();
+  }
+
+  function updateSocialLabels() {
+    document.getElementById('ig-label').textContent = socials.ig || 'Instagram';
+    document.getElementById('li-label').textContent = socials.li ? 'LinkedIn ↗' : 'LinkedIn';
+    document.getElementById('dc-label').textContent = socials.dc || 'Discord';
+
+    const igBtn = document.getElementById('ig-label').parentElement;
+    const liBtn = document.getElementById('li-label').parentElement;
+    if (socials.ig) { igBtn.onclick = () => window.open('https://instagram.com/' + socials.ig.replace('@',''), '_blank'); }
+    else { igBtn.onclick = openSocialModal; }
+    if (socials.li) { liBtn.onclick = () => window.open(socials.li, '_blank'); }
+    else { liBtn.onclick = openSocialModal; }
+  }
+
+  document.getElementById('social-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeSocialModal();
+  });
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── INIT ── */
+  renderProjects();
+  renderExperiences();
+  updateSocialLabels();
+
+  /* ── CURSOR GLOW ── */
+  const glow = document.createElement('div');
+  glow.style.cssText = 'position:fixed;top:0;left:0;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(232,255,71,0.11) 0%,rgba(232,255,71,0.04) 35%,transparent 70%);pointer-events:none;z-index:0;opacity:1;transition:opacity 0.4s;will-change:transform;';
+  document.body.appendChild(glow);
+
+  let mx = window.innerWidth/2, my = window.innerHeight/2, cx = mx, cy = my;
+
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
+  document.addEventListener('mouseenter', () => { glow.style.opacity = '1'; });
+
+  (function loop() {
+    cx += (mx - cx) * 0.08;
+    cy += (my - cy) * 0.08;
+    glow.style.transform = 'translate(' + (cx - 300) + 'px,' + (cy - 300) + 'px)';
+    requestAnimationFrame(loop);
+  })();
+</script>
+</body>
+</html>
